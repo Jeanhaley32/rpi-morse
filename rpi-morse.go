@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 	"unicode"
 
@@ -52,7 +53,7 @@ var (
 		'x': "lssl",
 		'y': "lsll",
 		'z': "llss",
-		'1': "sllll", 
+		'1': "sllll",
 		'2': "sslll",
 		'3': "sssll",
 		'4': "ssssl",
@@ -61,7 +62,7 @@ var (
 		'7': "llsss",
 		'8': "lllss",
 		'9': "lllls",
-		'0': "lllll"
+		'0': "lllll",
 	}
 )
 
@@ -75,7 +76,7 @@ func main() {
 func initPin() {
 	err := rpio.Open()
 	if err != nil {
-		log.Fatal("failed to open IO:")
+		log.Fatalln("failed to open IO:")
 	}
 	pin.Output()
 }
@@ -85,7 +86,7 @@ func getUserInput() string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("message: ")
 	message, _ := reader.ReadString('\n')
-	return message
+	return strings.ToLower(message)
 }
 
 // read string and grab morse value
@@ -109,7 +110,7 @@ func interpretMorse(a string) {
 		case 's':
 			dot()
 		default:
-			log.Fatal("Unrecognized character")
+			log.Fatalln("Unrecognized character")
 		}
 	}
 }
