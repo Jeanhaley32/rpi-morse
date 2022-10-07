@@ -75,7 +75,7 @@ func main() {
 func initPin() {
 	err := rpio.Open()
 	if err != nil {
-		panic("failed to open IO:")
+		log.Fatal("failed to open IO:")
 	}
 	pin.Output()
 }
