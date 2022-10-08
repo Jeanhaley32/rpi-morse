@@ -17,8 +17,10 @@ var (
 	timeunit = 200 * time.Millisecond
 	// sets which IO pin to use
 	pin = rpio.Pin(12)
-	// time between each character is a single time unit
+	// time between each blink.
 	interrupt = timeunit
+	// time between each character
+	characterinterrupt = 3 * timeunit
 	// space between words, 7 time units
 	wordinterrupt = 7 * timeunit
 	// dash is 3 time units
@@ -94,6 +96,7 @@ func read(a string) {
 	for _, r := range a {
 		if !unicode.IsSpace(r) {
 			interpretMorse(morsemap[r])
+			time.Sleep(characterinterrupt)
 		} else {
 			space()
 		}
@@ -122,11 +125,11 @@ func dash() {
 
 func dot() {
 	blink(dottime)
-	time.Sleep(2 * interrupt)
+	time.Sleep(interrupt)
 }
 
 func space() {
-	time.Sleep(2 * wordinterrupt)
+	time.Sleep(wordinterrupt)
 }
 
 func blink(s time.Duration) {
