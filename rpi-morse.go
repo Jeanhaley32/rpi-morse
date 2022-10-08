@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -70,8 +69,16 @@ var (
 
 func main() {
 	initPin()
-	msg := getUserInput()
+	msg := getArgs()
+	fmt.Println(msg)
 	read(msg)
+}
+
+func getArgs() string {
+	if len(os.Args) < 2 {
+		log.Fatal("Please provide a string")
+	}
+	return strings.ToLower(os.Args[1])
 }
 
 // initialize IO pin, and set to output mode
@@ -83,24 +90,19 @@ func initPin() {
 	pin.Output()
 }
 
-// Grab user input. Using bufio reader to better support multiple words.
-func getUserInput() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("message: ")
-	message, _ := reader.ReadString('\n')
-	return strings.ToLower(message)
-}
-
 // read string and grab morse value
 func read(a string) {
 	for _, r := range a {
 		if !unicode.IsSpace(r) {
 			interpretMorse(morsemap[r])
+			fmt.Print(" ")
 			time.Sleep(characterinterrupt)
 		} else {
+			fmt.Print("   ")
 			space()
 		}
 	}
+	fmt.Println()
 
 }
 
@@ -120,11 +122,13 @@ func interpretMorse(a string) {
 
 func dash() {
 	blink(dashtime)
+	print("-")
 	time.Sleep(interrupt)
 }
 
 func dot() {
 	blink(dottime)
+	print(".")
 	time.Sleep(interrupt)
 }
 
