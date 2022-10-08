@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -75,10 +76,18 @@ func main() {
 }
 
 func getArgs() string {
+	// If no CL Arguments are provided, ask for a message from the user.
 	if len(os.Args) < 2 {
-		log.Fatal("Please provide a string")
+		fmt.Print("Please enter a message: ")
+		reader := bufio.NewReader(os.Stdin)
+		msg, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal("failed to read stdin")
+		}
+		return strings.ToLower(msg)
 	}
-	return strings.ToLower(os.Args[1])
+	// return CL arguments as one string, all lower case.
+	return strings.ToLower(strings.Join(os.Args[1:], " "))
 }
 
 // initialize IO pin, and set to output mode
