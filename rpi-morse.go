@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 	"unicode"
@@ -14,7 +15,7 @@ import (
 
 var (
 	// Defines a single time unit
-	timeunit = 200 * time.Millisecond
+	timeunit = 100 * time.Millisecond
 	// sets which IO pin to use
 	pin = rpio.Pin(12)
 	// time between each blink.
@@ -69,10 +70,21 @@ var (
 )
 
 func main() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go closeRoutine(c)
 	initPin()
 	msg := getArgs()
 	fmt.Println(msg)
 	read(msg)
+}
+
+func closeRoutine(c chan os.Signal) {
+	for sig := range c {
+		log.Printf("captured %v, exiting..", sig)
+		pin.Low()
+		os.Exit(1)
+	}
 }
 
 func getArgs() string {
@@ -124,7 +136,7 @@ func interpretMorse(a string) {
 		case 's':
 			dot()
 		default:
-			log.Fatalln("Unrecognized character")
+			log.Fatalln("Not sure how you got here.")
 		}
 	}
 }
